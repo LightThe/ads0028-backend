@@ -29,7 +29,7 @@ describe('Testes da rota /tarefas', () => {
         expect(response.body.concluida).toBeFalsy();
     });
 
-    test('get /:id deve retornar a tarefa cadastrada', async () => {
+    test('get /:id deve retornar a tarefa existente', async () => {
         const response = await request.get(`${url}/${id}`);
 
         expect(response.status).toBe(200);
@@ -40,8 +40,51 @@ describe('Testes da rota /tarefas', () => {
         expect(response.body.concluida).toBeFalsy();
     });
 
-    test('get /:id deve retornar 404 se não existe', async () => {
+    test('get /:id deve retornar 404 se o id não existe', async () => {
         const response = await request.get(`${url}/999`);
+
+        expect(response.status).toBe(404);
+        expect(response.headers['content-type']).toMatch(/application\/json/);
+        expect(response.body.msg).toBe("Tarefa não encontrada");
+    });
+
+    test('put /:id deve alterar um objeto existente', async () => {
+        const edited = {
+            nome: "Editar a tarefa",
+            concluida: true
+        };
+
+        const response = await request.put(`${url}/${id}`).send(edited);
+
+        expect(response.status).toBe(200);
+        expect(response.headers['content-type']).toMatch(/application\/json/);
+        expect(response.body.id).toBe(id);
+        expect(response.body.nome).toMatch(edited.nome);
+        expect(response.body.concluida).toBeTruthy();
+    });
+
+    test('put /:id deve retornar 404 se o id não existe', async () => {
+        const edited = {
+            nome: "Editar a tarefa",
+            concluida: true
+        };
+
+        const response = await request.put(`${url}/999`).send(edited);
+
+        expect(response.status).toBe(404);
+        expect(response.headers['content-type']).toMatch(/application\/json/);
+        expect(response.body.msg).toBe("Tarefa não encontrada");
+    });
+
+    test('delete /:id deve excluir o objeto', async () => {
+        const response = await request.delete(`${url}/${id}`);
+
+        expect(response.status).toBe(204);
+        expect(response.body).toStrictEqual({});
+    });
+
+    test('delete /:id deve retornar 404 se o id não existe', async () => {
+        const response = await request.delete(`${url}/999`);
 
         expect(response.status).toBe(404);
         expect(response.headers['content-type']).toMatch(/application\/json/);

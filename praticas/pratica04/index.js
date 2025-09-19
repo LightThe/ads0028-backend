@@ -66,7 +66,7 @@ routerTarefas.delete('/:id', (req, res) => {
     const { id } = req.params;
     const tarefaIndex = tarefas.findIndex((t) => t.id == id);
 
-    if (tarefaIndex > 0) {
+    if (tarefaIndex >= 0) {
         tarefas.splice(tarefaIndex, 1);
         res.status(204).end();
     }
