@@ -1,48 +1,43 @@
-const tarefas = [];
+const model = require('../models/tarefaModel');
 
 const listarTarefas = (req, res) => {
-    res.send(tarefas);
+    res.send(model.listar());
 };
 
 const criarTarefa = (req, res) => {
-    const novaTarefa = { ...req.body };
-
-    novaTarefa.id = Math.max(...tarefas.map(t => t.id), 1) + 1;
-    tarefas.push(novaTarefa);
-
+    const novaTarefa = model.criar(req.body);
     res.status(201).json(novaTarefa);
 };
 
-const buscarTarefa = (req, res) => {
-    const tarefa = tarefas.find((t) => t.id === parseInt(req.params.id));
-    if (tarefa) res.json(tarefa);
+const buscarTarefa = (req, res, next) => {
+    const tarefa = model.findById(parseInt(req.params.id));
+    if (tarefa) {
+        req.tarefa = tarefa;
+        next();
+    }
     else res.status(404).json({ msg: "Tarefa não encontrada" });
+};
+
+const obterTarefa = (req, res) => {
+    res.json(req.tarefa);
 };
 
 const editarTarefa = (req, res) => {
-    const { nome, concluida } = req.body;
-    const tarefa = tarefas.find((t) => t.id === parseInt(req.params.id));
-    if (tarefa) {
-        tarefa.nome = nome;
-        tarefa.concluida = concluida;
-        res.json(tarefa);
-    }
-    else res.status(404).json({ msg: "Tarefa não encontrada" });
+    const { id } = req.params;
+    const tarefa = model.atualizar({ id, ...req.body });
+    res.json(tarefa);
 };
 
 const removerTarefa = (req, res) => {
-    const tarefaIndex = tarefas.findIndex((t) => t.id === parseInt(req.params.id));
-    if (tarefaIndex >= 0) {
-        tarefas.splice(tarefaIndex, 1);
-        res.status(204).end();
-    }
-    else res.status(404).json({ msg: "Tarefa não encontrada" });
+    model.remover(parseInt(req.params.id));
+    res.status(204).end();
 };
 
 module.exports = {
     listarTarefas,
     criarTarefa,
     buscarTarefa,
+    obterTarefa,
     editarTarefa,
     removerTarefa
 };
