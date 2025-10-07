@@ -1,0 +1,10 @@
+services:
+  db:
+    image: mongodb/mongodb-community-server:7.0-ubuntu2204
+    container_name: mongodbanco
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo_data/:/data/db
+    tty: true
+    stdin_open: true
