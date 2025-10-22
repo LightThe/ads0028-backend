@@ -6,9 +6,9 @@ const mongoose = require('mongoose');
 
 const tarefaRouter = require('./routes/tarefas');
 
-const url = `mongodb+srv://${process.env.MONGODB_USR}:${process.env.MONGODB_PSW}@${process.env.MONGODB_HOST}/?retryWrites=true&w=majority&appName=Cluster0`
+const url = `mongodb+srv://${process.env.MONGODB_USR}:${process.env.MONGODB_PSW}@${process.env.MONGODB_HOST}/${process.env.MONGODB_DB}?retryWrites=true&w=majority`
 mongoose.connect(url, {})
-    .then(() => console.log("conectou com o db"))
+    .then(() => console.debug("Conectou com o MongoDB em", process.env.MONGODB_HOST))
     .catch((err) => console.error("Segue dando o erro ", err.message))
 
 const app = express();
