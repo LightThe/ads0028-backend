@@ -1,4 +1,3 @@
-const { default: mongoose } = require('mongoose');
 const mg = require('mongoose');
 
 const schema = new mg.Schema({

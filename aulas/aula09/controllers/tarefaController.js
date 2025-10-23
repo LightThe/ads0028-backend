@@ -42,8 +42,15 @@ const exibir = (req, res) => {
 };
 const atualizar = async (req, res) => {
     const { id } = req.params;
-    const tarefaAtualizada = await Tarefa.findOneAndUpdate({ _id: id }, { ...req.body }, { new: true });
-    res.json(tarefaAtualizada);
+    try {
+        const tarefaAtualizada = await Tarefa.findOneAndUpdate({ _id: id }, { ...req.body }, { new: true, runValidators: true });
+        res.json(tarefaAtualizada);
+    } catch (e) {
+        if(e.errors){
+            return res.status(422).json({msg: e.errors.nome.message})
+        }
+        return res.status(500).json({msg: "O Request tá Bad"})
+    }
 };
 const remover = async (req, res) => {
     const { id } = req.params;

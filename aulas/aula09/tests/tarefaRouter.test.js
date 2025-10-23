@@ -70,6 +70,12 @@ describe('Testes da rota /tarefas', () => {
         expect(response.body.msg).toMatch("Tarefa não encontrada")
     });
 
+    test('PUT /:id deve retornar 422 se id incorreto', async () => {
+        const response = await request.put(`${url}/${id}`).send({ nome: "", concluida: true });
+        expect(response.status).toBe(422);
+        expect(response.body.msg).toMatch("Nome da tarefa é obrigatório")
+    });
+
     test('PUT /:id deve retornar 400 se id incorreto', async () => {
         const response = await request.put(`${url}/0`);
         expect(response.status).toBe(400);
