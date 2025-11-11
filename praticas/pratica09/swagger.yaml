@@ -1,0 +1,107 @@
+openapi: 3.1.1
+info:
+  title: Prática 09
+  description: Uma api Express JS para utilizar a documentação do swagger
+  version: 0.1.1
+servers:
+  - url: http://localhost:3000
+    description: Ambiente de desenvolvimento
+tags:
+ - name: Produtos
+paths:
+  /produtos:
+    get:
+      tags:
+        - Produtos
+      responses:
+        200:
+          description: Uma lista de produtos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfProdutos'
+    post:
+      tags:
+        - Produtos
+      requestBody:
+        description: Um JSON com dados do novo produto
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Produto'
+      responses:
+        201:
+          description: Produto criado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Produto'
+        422:
+          description: Nome e preço são obrigatórios
+  /produtos/{produtoId}:
+    # Subi o nível do parâmetro, já que é o mesmo para todos nesse endpoint
+    parameters:
+      - in: path
+        name: produtoId
+        required: true
+        description: ID do produto a ser buscado
+        schema:
+          type: string
+    get:
+      tags:
+        - Produtos
+      responses:
+        200:
+          description: Um JSON com os dados do produto encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Produto'
+        404:
+          description: Produto não encontrado
+    put:
+      tags:
+        - Produtos
+      requestBody:
+        description: Um JSON com dados do produto a atualizar
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Produto'
+      responses:
+        200:
+          description: Um JSON com os dados do produto atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Produto'
+        404:
+          description: Produto não encontrado
+        422:
+          description: Nome e preço são obrigatórios
+    delete:
+      tags:
+        - Produtos
+      responses:
+        204:
+          description: Produto deletado com sucesso
+        404:
+          description: Produto não encontrado
+components:
+  schemas:
+    ArrayOfProdutos:
+      type: array
+      items:
+        $ref: '#/components/schemas/Produto'
+    Produto:
+      type: object
+      properties:
+        _id:
+          type: string
+        nome:
+          type: string
+        preco:
+          type: number
+          example: 18.25
